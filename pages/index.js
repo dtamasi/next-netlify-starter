@@ -1,23 +1,41 @@
-import Head from 'next/head'
-import Header from '@components/Header'
-import Footer from '@components/Footer'
+import Layout from "../components/layout/Layout";
+import Home from "../components/Home";
 
-export default function Home() {
+import axios from "axios";
+
+export default function Index({ data }) {
   return (
-    <div className="container">
-      <Head>
-        <title>Next.js Starter!</title>
-        <link rel="icon" href="/favicon.ico" />
-      </Head>
+    <Layout>
+      <Home data={data} />
+    </Layout>
+  );
+}
 
-      <main>
-        <Header title="Welcome to my app!" />
-        <p className="description">
-          Get started by editing <code>pages/index.js</code>
-        </p>
-      </main>
+export async function getServerSideProps({ query }) {
+  const jobType = query.jobType || "";
+  const education = query.education || "";
+  const experience = query.experience || "";
+  const keyword = query.keyword || "";
+  const location = query.location || "";
+  const page = query.page || 1;
 
-      <Footer />
-    </div>
-  )
+  let min_salary = "";
+  let max_salary = "";
+
+  if (query.salary) {
+    const [min, max] = query.salary.split("-");
+    min_salary = min;
+    max_salary = max;
+  }
+
+  const queryStr = `keyword=${keyword}&location=${location}&page=${page}&jobType=${jobType}&education=${education}&experience=${experience}&min_salary=${min_salary}&max_salary=${max_salary}`;
+
+  const res = await axios.get(`${process.env.API_URL}/api/jobs?${queryStr}`);
+  const data = res.data;
+
+  return {
+    props: {
+      data,
+    },
+  };
 }

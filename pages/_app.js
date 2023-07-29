@@ -1,7 +1,15 @@
-import '@styles/globals.css'
+import "../styles/globals.css";
+import { AuthProvider } from "../context/AuthContext";
+import { JobProvider } from "../context/JobContext";
 
-function Application({ Component, pageProps }) {
-  return <Component {...pageProps} />
+function MyApp({ Component, pageProps }) {
+  return (
+    <AuthProvider>
+      <JobProvider>
+        <Component {...pageProps} />
+      </JobProvider>
+    </AuthProvider>
+  );
 }
 
-export default Application
+export default MyApp;
